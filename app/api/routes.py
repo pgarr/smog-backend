@@ -1,10 +1,12 @@
-from time import strftime
-
 from flask import jsonify, request, current_app
+from marshmallow import ValidationError
 
+from app import db
 from app.api import bp
-from app.api.errors import error_response
+from app.api.errors import error_response, bad_request
+from app.api.schemas import subscription_schema
 from app.gios_api import GiosService
+from app.models import Subscription
 
 
 @bp.route('/', methods=['GET'])
@@ -20,6 +22,37 @@ def get_air_data():
         return error_response(422, 'Lack required parameters (lat, lon).')
     else:
         return jsonify(GiosService.get_nearest_station_data(lat, lon)), 200
+
+
+@bp.route('/register', methods=['POST'])
+def register():
+    """
+    {
+        "email": "sample@test.pl",
+        "lat": 51.1234,
+        "lon": 21.0101,
+        "hours": [12, 14, 20]
+    }
+    """
+    json_data = request.get_json()
+    if not json_data:
+        return bad_request('No input data provided')
+    try:
+        data = subscription_schema.load(json_data)
+    except ValidationError as e:
+        current_app.logger.info("Subscription failure")
+        return jsonify(e.messages), 422
+    else:
+        current_app.logger.info('Subscription data: %s' % data)
+        # TODO: sprawdzić czy email już istnieje
+        hours = data.pop('hours')
+        sub = Subscription(**data)
+        for h in hours:  # TODO: lambda?
+            sub.add_hour(h)  # TODO: obsłużyć sytuację gdy lista jest pusta - odrzucić subskrypcję
+        db.session.add(sub)
+        db.session.commit()
+        current_app.logger.info("Subscription saved")
+        return jsonify({'message': 'Subscription saved!'}), 200
 
 
 @current_app.after_request
