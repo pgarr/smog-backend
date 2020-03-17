@@ -40,7 +40,6 @@ def register():
     try:
         data = subscription_schema.load(json_data)
     except ValidationError as e:
-        current_app.logger.info("Subscription failure")
         return jsonify(e.messages), 422
     else:
         current_app.logger.info('Subscription data: %s' % data)
@@ -48,11 +47,16 @@ def register():
         hours = data.pop('hours')
         sub = Subscription(**data)
         for h in hours:  # TODO: lambda?
-            sub.add_hour(h)  # TODO: obsłużyć sytuację gdy lista jest pusta - odrzucić subskrypcję
+            sub.add_hour(h)
         db.session.add(sub)
         db.session.commit()
         current_app.logger.info("Subscription saved")
         return jsonify({'message': 'Subscription saved!'}), 200
+
+
+@bp.route('/subscription', methods=['PUT', 'DELETE'])
+def manage_subscription():
+    return error_response(501)
 
 
 @current_app.after_request

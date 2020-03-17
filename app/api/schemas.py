@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, validate
 
 
 class SubscriptionSchema(Schema):
@@ -6,7 +6,7 @@ class SubscriptionSchema(Schema):
     email = fields.Email(required=True)
     lat = fields.Float(required=True)
     lon = fields.Float(required=True)
-    hours = fields.List(fields.Integer, required=True)
+    hours = fields.List(fields.Integer, required=True, validate=validate.Length(min=1))
 
 
 subscription_schema = SubscriptionSchema()
