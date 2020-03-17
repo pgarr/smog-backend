@@ -7,12 +7,13 @@ import requests
 logger = logging.getLogger('gios_api')
 logger.setLevel(logging.INFO)
 
+
 class GiosApi:
     address = 'http://api.gios.gov.pl/pjp-api/rest'
 
     @classmethod
     def get_stations(cls):
-        '''
+        """
         Stacje pomiarowe
         Usługa sieciowa udostępniająca listę stacji pomiarowych.
         http://api.gios.gov.pl/pjp-api/rest/station/findAll
@@ -39,12 +40,12 @@ class GiosApi:
             },
             "addressStreet": null
         }]
-        '''
+        """
         return cls.get_response('/station/findAll')
 
     @classmethod
     def get_devices(cls, station_id):
-        '''
+        """
         Stanowiska pomiarowe
         Usługa sieciowa udostępniająca listę stanowisk pomiarowych dostępnych na wybranej stacji pomiarowej.
         http://api.gios.gov.pl/pjp-api/rest/station/sensors/{stationId}
@@ -75,12 +76,12 @@ class GiosApi:
                 "idParam": 6
             }
         }]
-        '''
+        """
         return cls.get_response('/station/sensors/' + station_id)
 
     @classmethod
     def get_measurment(cls, device_id):
-        '''
+        """
         Dane pomiarowe
         Usługa sieciowa udostępniająca dane pomiarowe na podstawie podanego identyfikatora stanowiska pomiarowego.
         http://api.gios.gov.pl/pjp-api/rest/data/getData/{sensorId}
@@ -103,12 +104,12 @@ class GiosApi:
                 "value": 27.5946
             }]
         }
-        '''
+        """
         return cls.get_response('/data/getData/' + device_id)
 
     @classmethod
     def get_air_index(cls, station_id):
-        '''
+        """
         Indeks jakości powietrza
         Usługa sieciowa udostępniająca indeks jakości powietrza na podstawie podanego identyfikatora stacji pomiarowej.
         http://api.gios.gov.pl/pjp-api/rest/aqindex/getIndex/{stationId}
@@ -149,7 +150,7 @@ class GiosApi:
             "c6h6IndexLevel": null,
             "c6h6SourceDataDate": "2017-03-28 12:00:00"
         }
-        '''
+        """
         return cls.get_response('/aqindex/getIndex/' + str(station_id))
 
     @classmethod
@@ -191,7 +192,7 @@ class GiosService:
 
     @classmethod
     def calculate_distance(cls, lat1, lon1, lat2, lon2):
-        '''https://www.geeksforgeeks.org/program-distance-two-points-earth/'''
+        """https://www.geeksforgeeks.org/program-distance-two-points-earth/"""
 
         # The math module contains a function named
         # radians which converts from degrees to radians.
