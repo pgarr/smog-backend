@@ -13,12 +13,12 @@ class Subscription(db.Model):
     email = db.Column(db.String(120), index=True, unique=True)
     lat = db.Column(db.Float)
     lon = db.Column(db.Float)
-    hours = db.relationship('SubscriptionHours', cascade="all, delete-orphan", backref="subscription")
+    hours = db.relationship('SubscriptionHour', cascade="all, delete-orphan", backref="subscription")
 
     def add_hour(self, hour):
         if not self.hours:
-            self.hours = []
-        self.hours.append(SubscriptionHours(hour=hour))
+            self.hours = []  # TODO: set, albo zapewnić, że nie będzie duplikatów
+        self.hours.append(SubscriptionHour(hour=hour))
 
     def get_change_subscription_token(self, expires_in=600):  # TODO: dostosować czas
         return jwt.encode(
@@ -29,8 +29,8 @@ class Subscription(db.Model):
         return "Subscription[mail: %s, lat: %d, lon: %d, hours: %s" % (self.email, self.lat, self.lon, self.hours)
 
 
-class SubscriptionHours(db.Model):
-    __tablename__ = 'subscription_hours'
+class SubscriptionHour(db.Model):
+    __tablename__ = 'subscription_hour'
 
     id = db.Column(db.Integer, primary_key=True)
     hour = db.Column(db.Integer, nullable=False)
