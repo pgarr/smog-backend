@@ -17,7 +17,7 @@ class Subscription(db.Model):
 
     def add_hour(self, hour):
         if not self.hours:
-            self.hours = []  # TODO: set, albo zapewnić, że nie będzie duplikatów
+            self.hours = []
         self.hours.append(SubscriptionHour(hour=hour))
 
     def get_change_subscription_token(self, expires_in=600):  # TODO: dostosować czas
@@ -36,6 +36,7 @@ class SubscriptionHour(db.Model):
     hour = db.Column(db.Integer, nullable=False)
     subscription_id = db.Column(db.Integer, db.ForeignKey('subscription.id'))
 
+    # nie działa w sql lite
     db.Index('idx_hour_subs_id', 'hour', 'subscription_id', unique=True)
 
     def __repr__(self):

@@ -43,8 +43,16 @@ def register():
         return jsonify(e.messages), 422
     else:
         current_app.logger.info('Subscription data: %s' % data)
-        # TODO: sprawdzić czy email już istnieje
-        hours = data.pop('hours')
+
+        # sprawdzić czy email już istnieje
+        old_sub = Subscription.query.filter_by(email=data.get('email')).first()
+        if old_sub is not None:
+            current_app.logger.info("Email taken")
+            return error_response(422, "Email '%s' already registered!" % data.get('email'))
+
+        # Usunięcie duplikatów godzin
+        hours = set(data.pop('hours'))
+
         sub = Subscription(**data)
         for h in hours:  # TODO: lambda?
             sub.add_hour(h)
