@@ -4,7 +4,7 @@ from marshmallow import ValidationError
 from app import db
 from app.api import bp
 from app.api.errors import error_response, bad_request
-from app.api.schemas import subscription_schema
+from app.api.schemas import new_sub_schema, edit_sub_schema
 from app.gios_api import GiosService
 from app.models import Subscription
 
@@ -38,7 +38,7 @@ def register():
     if not json_data:
         return bad_request('No input data provided')
     try:
-        data = subscription_schema.load(json_data)
+        data = new_sub_schema.load(json_data)
     except ValidationError as e:
         return jsonify(e.messages), 422
     else:
@@ -50,21 +50,63 @@ def register():
             current_app.logger.info("Email taken")
             return error_response(422, "Email '%s' already registered!" % data.get('email'))
 
-        # Usunięcie duplikatów godzin
-        hours = set(data.pop('hours'))
-
+        hours = data.pop('hours')
         sub = Subscription(**data)
-        for h in hours:  # TODO: lambda?
-            sub.add_hour(h)
+        sub.update_hours(hours)
+
         db.session.add(sub)
         db.session.commit()
         current_app.logger.info("Subscription saved")
         return jsonify({'message': 'Subscription saved!'}), 200
 
 
-@bp.route('/subscription', methods=['PUT', 'DELETE'])
-def manage_subscription():
-    return error_response(501)
+@bp.route('/subscription/<token>', methods=['GET', 'PUT', 'DELETE'])
+def manage_subscription(token):
+    subscription = Subscription.verify_change_subscription_token(token)
+    if not subscription:
+        return error_response(400, "Invalid token!")  # TODO: ulepszyć odpowiedź
+    else:
+        current_app.logger.info('Manage: %s' % subscription)
+
+        # usunięcie subskrypcji
+        if request.method == 'DELETE':
+            db.session.delete(subscription)
+            db.session.commit()
+            current_app.logger.info('Subscription deleted')
+            return jsonify({'message': 'Subscription deleted'}), 200
+
+        # aktualizacja subskrypcji
+        elif request.method == "PUT":
+            json_data = request.get_json()
+            if not json_data:
+                return bad_request('No input data provided')
+            try:
+                data = edit_sub_schema.load(json_data)
+            except ValidationError as e:
+                return jsonify(e.messages), 422
+            else:
+                current_app.logger.info('Update subscription data: %s' % data)
+                subscription.update_hours(data.pop('hours'))
+                for key, value in data.items():
+                    subscription.__setattr__(key, value)
+
+                db.session.add(subscription)
+                db.session.commit()
+                current_app.logger.info('Subscription updated')
+
+                return jsonify({'message': 'Subscription updated'}), 200
+
+        # pobierz dane subskrypcji
+        elif request.method == "GET":
+            result = new_sub_schema.dump(subscription)
+            return jsonify({'subscription': result.data}), 200
+
+
+# TODO: testowa funkcja, usunąć
+@bp.route('/subscription/token/<pk>', methods=['GET'])
+def token(pk):
+    tkn = Subscription.query.get(pk).get_change_subscription_token()
+    return jsonify({'token': tkn})
 
 
 @current_app.after_request

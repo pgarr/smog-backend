@@ -20,13 +20,28 @@ class Subscription(db.Model):
             self.hours = []
         self.hours.append(SubscriptionHour(hour=hour))
 
-    def get_change_subscription_token(self, expires_in=600):  # TODO: dostosować czas
+    def update_hours(self, new_hours):
+        # wyczyść duplikaty
+        new_hours = set(new_hours)
+
+        self.hours = [SubscriptionHour(hour=h) for h in new_hours]
+
+    def get_change_subscription_token(self, expires_in=6000):  # TODO: dostosować czas
         return jwt.encode(
-            {'reset_password': self.id, 'exp': time() + expires_in},
+            {'change_subscription': self.id, 'exp': time() + expires_in},
             current_app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
 
+    @staticmethod
+    def verify_change_subscription_token(token):
+        try:
+            id_ = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])['change_subscription']
+        except:
+            return
+        return Subscription.query.get(id_)
+
     def __repr__(self):
-        return "Subscription[mail: %s, lat: %d, lon: %d, hours: %s" % (self.email, self.lat, self.lon, self.hours)
+        return "Subscription[id: %d, mail: %s, lat: %d, lon: %d, hours: %s" % (
+            self.id, self.email, self.lat, self.lon, self.hours)
 
 
 class SubscriptionHour(db.Model):

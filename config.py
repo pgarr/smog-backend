@@ -11,7 +11,7 @@ except Exception:
 
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY')
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'testing-key'
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'data.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
@@ -22,3 +22,5 @@ class Config:
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     ADMINS = []
     LOG_TO_STDOUT = os.environ.get('LOG_TO_STDOUT')
+
+    FRONT_URL = os.environ.get('FRONT_URL') or 'http://localhost'

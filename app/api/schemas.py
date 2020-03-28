@@ -1,12 +1,16 @@
 from marshmallow import Schema, fields, validate
 
 
-class SubscriptionSchema(Schema):
+class EditSubscriptionSchema(Schema):
     id = fields.Integer(dump_only=True)
-    email = fields.Email(required=True)
     lat = fields.Float(required=True)
     lon = fields.Float(required=True)
-    hours = fields.List(fields.Integer, required=True, validate=validate.Length(min=1))
+    hours = fields.List(fields.Integer, required=True, validate=validate.Length(min=1))  # TODO: dump do poprawy
 
 
-subscription_schema = SubscriptionSchema()
+class NewSubscriptionSchema(EditSubscriptionSchema):
+    email = fields.Email(required=True)
+
+
+edit_sub_schema = EditSubscriptionSchema()
+new_sub_schema = NewSubscriptionSchema()
