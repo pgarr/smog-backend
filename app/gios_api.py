@@ -182,10 +182,10 @@ class GiosService:
     def get_nearest_station(cls, lat, lon):
         logger.info('Get nearest lat=%s, lon=%s' % (lat, lon))
         stations = json.loads(GiosApi.get_stations())
-        nearest = {'distance': 100000000}  # TODO: to jest słabe, jakoś to zamienić
+        nearest = None
         for station in stations:
             station['distance'] = cls.calculate_distance(lat, lon, station['gegrLat'], station['gegrLon'])
-            if nearest['distance'] > station['distance']:
+            if not nearest or nearest.get('distance') > station.get('distance'):
                 nearest = station
         logger.info('Nearest id=%s' % nearest['id'])
         return nearest
