@@ -172,14 +172,14 @@ class GiosApi:
 
 class GiosService:
     @classmethod
-    def get_nearest_station_data(cls, lat, lon):
+    def get_nearest_station_data(cls, lat, lon):  # TODO: unit testy
         nearest = cls.get_nearest_station(lat, lon)
         data = json.loads(GiosApi.get_air_index(nearest['id']))
         payload = {'stataion': nearest, 'data': data}
         return payload
 
     @classmethod
-    def get_nearest_station(cls, lat, lon):
+    def get_nearest_station(cls, lat, lon):  # TODO: unit testy
         logger.info('Get nearest lat=%s, lon=%s' % (lat, lon))
         stations = json.loads(GiosApi.get_stations())
         nearest = None

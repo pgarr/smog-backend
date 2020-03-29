@@ -15,7 +15,7 @@ def connection():
 
 
 @bp.route('/air-data', methods=['GET'])
-def get_air_data():
+def get_air_data():  # TODO: functional testy
     lat = request.args.get('lat', None)
     lon = request.args.get('lon', None)
     if not lat or not lon:
@@ -61,7 +61,7 @@ def register():
 
 
 @bp.route('/subscription/<token>', methods=['GET', 'PUT', 'DELETE'])
-def manage_subscription(token):
+def manage_subscription(token): # TODO: functional testy
     subscription = Subscription.verify_change_subscription_token(token)
     if not subscription:
         return error_response(400, "Invalid token!")  # TODO: ulepszyć odpowiedź
