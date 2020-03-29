@@ -23,7 +23,7 @@ class Subscription(db.Model):
     def get_int_hours(self):
         return sorted([h.hour for h in self.hours])
 
-    def update_hours(self, new_hours): # TODO: unit testy
+    def update_hours(self, new_hours):
         # wyczyść duplikaty
         new_hours = set(new_hours)
 
