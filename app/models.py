@@ -20,7 +20,10 @@ class Subscription(db.Model):
             self.hours = []
         self.hours.append(SubscriptionHour(hour=hour))
 
-    def update_hours(self, new_hours):
+    def get_int_hours(self):
+        return sorted([h.hour for h in self.hours])
+
+    def update_hours(self, new_hours): # TODO: unit testy
         # wyczyść duplikaty
         new_hours = set(new_hours)
 
@@ -40,7 +43,7 @@ class Subscription(db.Model):
         return Subscription.query.get(id_)
 
     def __repr__(self):
-        return "Subscription[id: %d, mail: %s, lat: %d, lon: %d, hours: %s" % (
+        return "Subscription[id: %d, mail: %s, lat: %f, lon: %f, hours: %s" % (
             self.id, self.email, self.lat, self.lon, self.hours)
 
 
