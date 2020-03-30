@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 import json
 import logging
 from math import radians, cos, sin, asin, sqrt
@@ -80,7 +81,7 @@ class GiosApi:
         return cls.get_response('/station/sensors/' + station_id)
 
     @classmethod
-    def get_measurment(cls, device_id):
+    def get_measurement(cls, device_id):
         """
         Dane pomiarowe
         Usługa sieciowa udostępniająca dane pomiarowe na podstawie podanego identyfikatora stanowiska pomiarowego.
@@ -162,12 +163,12 @@ class GiosApi:
             logger.info('200')
             return response.text
         if response.status_code == 404:
-            logger.warning('404')
+            logger.error('404')
             raise FileNotFoundError
         else:
             msg = 'GIOS API unknown error! Http error: %s' % response.status_code
             logger.error(msg)
-            raise ConnectionError(msg)
+            raise ConnectionError(msg)  # TODO: obsłużyć błędy w Service
 
 
 class GiosService:
