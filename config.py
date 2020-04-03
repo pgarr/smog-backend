@@ -23,4 +23,4 @@ class Config:
     ADMINS = []
     LOG_TO_STDOUT = os.environ.get('LOG_TO_STDOUT')
 
-    FRONT_URL = os.environ.get('FRONT_URL') or 'http://localhost'
+    FRONT_URL = os.environ.get('FRONT_URL') or 'http://localhost:80/'
