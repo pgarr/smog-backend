@@ -1,0 +1,12 @@
+Aktualny stan powietrza: {{ data["data"]["stIndexLevel"]["indexLevelName"] }}
+Lokalizacja stacji:
+    --Ulica:{{ data["station"]["addressStreet"] }}
+    --Miasto:{{ data["station"]["city"]["name"] }}
+    --Odległość:{{ data["station"]["distance"] }} km
+
+
+Zarządzaj subskrypcją:
+{{ front_url + token }}
+
+Z pozdrowieniami,
+Zespól Smog-api

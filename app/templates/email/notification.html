@@ -1,0 +1,14 @@
+<p>Aktualny stan powietrza: {{ data["data"]["stIndexLevel"]["indexLevelName"] }}</p>
+<p>Lokalizacja stacji:
+    <br> --Ulica:{{ data["station"]["addressStreet"] }}
+    <br> --Miasto:{{ data["station"]["city"]["name"] }}
+    <br> --Odległość:{{ data["station"]["distance"] }} km</p>
+
+<p>
+    Zarządzaj subskrypcją:
+    <a href="{{ front_url + token }}">
+        klik
+    </a>
+</p>
+<p>Z pozdrowieniami,</p>
+<p>Zespól Smog-api</p>
