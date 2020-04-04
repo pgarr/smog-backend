@@ -20,7 +20,7 @@ class Config:
     MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS') is not None
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
-    ADMINS = []
+    ADMINS = os.environ.get('ADMINS') or ['sample@localhost']
     LOG_TO_STDOUT = os.environ.get('LOG_TO_STDOUT')
 
     FRONT_URL = os.environ.get('FRONT_URL') or 'http://localhost:80/'
