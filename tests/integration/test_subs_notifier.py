@@ -1,3 +1,5 @@
+import datetime
+
 import pytest
 
 from app.subs_notifier import get_hour_subs
@@ -33,3 +35,11 @@ def test_get_hours_subs(test_client, database, make_subs_collection, hour, ins, 
 
     for m in notins:
         assert make_subs_collection[m - 1] not in subs
+
+
+actual_hours_test_data = [
+    (datetime.datetime(year=2020, month=3, day=2, hour=10, minute=0, second=0), 10),
+    (datetime.datetime(year=2020, month=3, day=2, hour=10, minute=0, second=1), 10),
+    (datetime.datetime(year=2020, month=3, day=2, hour=10, minute=59, second=59), 10),
+    (datetime.datetime(year=2020, month=3, day=2, hour=10, minute=1, second=0), 10)
+]

@@ -27,7 +27,7 @@ def create_app(config_class=Config):
     app.register_blueprint(api_bp, url_prefix='/api')
 
     # loggers
-    module_loggers = ['sqlalchemy', 'gios_api']
+    module_loggers = ['sqlalchemy', 'gios_api', 'notifier']
 
     # mail errors
     if not app.debug and not app.testing:  # TODO: odkomplikować tworzenie logów. Strategy/factory/builder pattern?
