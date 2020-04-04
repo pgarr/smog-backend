@@ -27,7 +27,7 @@ def send_subscription_email(subscription, data):
     send_email('[Smog-api] Stan twojego powietrza',  # TODO: nazwa aplikacji
                sender=current_app.config['ADMINS'][0],
                recipients=[subscription.email],
-               text_body=render_template('email/air_data.txt', data=data, front_url=current_app.config['FRONT_URL'],
+               text_body=render_template('email/notification.txt', data=data, front_url=current_app.config['FRONT_URL'],
                                          token=token),  # TODO: templates
-               html_body=render_template('email/air_data.html', data=data, front_url=current_app.config['FRONT_URL'],
-                                         token=token))
+               html_body=render_template('email/notification.html', data=data,
+                                         front_url=current_app.config['FRONT_URL'], token=token))
