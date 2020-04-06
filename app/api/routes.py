@@ -100,7 +100,7 @@ def manage_subscription(token):
         # pobierz dane subskrypcji
         elif request.method == "GET":
             result = new_sub_schema.dump(subscription)
-            return jsonify({'subscription': result.data}), 200
+            return result, 200
 
 
 # TODO: testowa funkcja, usunąć
