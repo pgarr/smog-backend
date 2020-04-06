@@ -62,7 +62,7 @@ def register():
 
 
 @bp.route('/subscription/<token>', methods=['GET', 'PUT', 'DELETE'])
-def manage_subscription(token): # TODO: functional testy
+def manage_subscription(token):
     subscription = Subscription.verify_change_subscription_token(token)
     if not subscription:
         return error_response(400, "Invalid token!")  # TODO: ulepszyć odpowiedź
