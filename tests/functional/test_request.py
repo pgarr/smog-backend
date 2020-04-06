@@ -1,5 +1,3 @@
-import pytest
-
 from app.models import Subscription
 
 
@@ -109,6 +107,23 @@ def test_register_no_hours(test_client, database):
     assert len(subscriptions) == 0
 
 
+def test_register_empty_hours(test_client, database):
+    email = "sample@test.pl"
+    lat = 51.1234
+    lon = 21.0101
+    hours = []
+
+    response = test_client.post('/api/register',
+                                json={"email": email, "lat": lat, "lon": lon, "hours": hours})
+
+    assert response.status_code == 422
+    json = response.get_json()
+    assert json.get('hours')
+
+    subscriptions = Subscription.query.all()
+    assert len(subscriptions) == 0
+
+
 def test_manage_subscription_delete_wrong_token(test_client, database, make_subscription):
     email = "sample@test.pl"
     lat = 51.1234
@@ -150,7 +165,6 @@ def test_manage_subscription_put_wrong_token(test_client, database, make_subscri
     assert response.status_code == 400
 
 
-@pytest.mark.xfail
 def test_manage_subscription_get(test_client, database, make_subscription):
     email = "sample@test.pl"
     lat = 51.1234
@@ -165,10 +179,10 @@ def test_manage_subscription_get(test_client, database, make_subscription):
     assert response.status_code == 200
     json = response.get_json()
 
-    assert json['subscription']['email'] == email
-    assert json['subscription']['lat'] == lat
-    assert json['subscription']['lon'] == lon
-    assert json['subscription']['hours'] == hours
+    assert json['email'] == email
+    assert json['lat'] == lat
+    assert json['lon'] == lon
+    assert json['hours'] == hours
 
 
 def test_manage_subscription_delete(test_client, database, make_subscription):
@@ -314,6 +328,36 @@ def test_manage_subscription_put_no_hours(test_client, database, make_subscripti
                                json={"lat": lat2, "lon": lon2})
 
     assert response.status_code == 422
+
+    subscriptions = Subscription.query.all()
+    assert len(subscriptions) == 1
+
+    sub = subscriptions[0]
+    assert sub.email == email
+    assert sub.lat == lat
+    assert sub.lon == lon
+    assert sub.get_int_hours() == hours
+
+
+def test_manage_subscription_put_empty_hours(test_client, database, make_subscription):
+    email = "sample@test.pl"
+    lat = 51.1234
+    lon = 21.0101
+    hours = [12, 14, 20]
+
+    sub = make_subscription(email, lat, lon, hours)
+    token = sub.get_change_subscription_token()
+
+    lat2 = 50
+    lon2 = 20
+    hours2 = []
+
+    response = test_client.put('/api/subscription/' + token,
+                               json={"lat": lat2, "lon": lon2, 'hours': hours2})
+
+    assert response.status_code == 422
+    json = response.get_json()
+    assert json.get('hours')
 
     subscriptions = Subscription.query.all()
     assert len(subscriptions) == 1
