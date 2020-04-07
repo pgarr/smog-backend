@@ -7,10 +7,10 @@ class EditSubscriptionSchema(Schema):
     lon = fields.Float(required=True)
     hours = fields.Method("get_hours", deserialize="load_hours", required=True, validate=validate.Length(min=1))
 
-    def get_hours(self, obj):  # TODO:  unit testy
+    def get_hours(self, obj):
         return obj.get_int_hours()
 
-    def load_hours(self, value):  # TODO: unit testy
+    def load_hours(self, value):
         return value
 
 
