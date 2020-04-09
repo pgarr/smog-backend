@@ -7,7 +7,6 @@ from app.api.errors import error_response, bad_request
 from app.api.schemas import new_sub_schema, edit_sub_schema
 from app.gios_api import GiosService
 from app.models import Subscription
-from app.subs_notifier import send_actual_notifications
 
 
 @bp.route('/', methods=['GET'])
@@ -101,13 +100,6 @@ def manage_subscription(token):
         elif request.method == "GET":
             result = new_sub_schema.dump(subscription)
             return result, 200
-
-
-# TODO: testowa funkcja, usunąć
-# @bp.route('/subscription/send', methods=['GET'])
-# def send():
-#     send_actual_notifications()
-#     return jsonify({'message': 'OK'}), 200
 
 
 @current_app.after_request
