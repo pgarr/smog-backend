@@ -2,7 +2,7 @@ import datetime
 
 import pytest
 
-from app.subs_notifier import get_hour_subs
+from notifier import get_hour_subs
 
 
 @pytest.fixture
