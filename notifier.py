@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 import datetime
 import logging
+import signal
 import time
 
 import schedule
@@ -48,31 +49,39 @@ def send_subscription_email(subscription, data):
 def send_actual_notifications():
     try:
         now = datetime.datetime.now()
-        logger.info(now.hour)
+        logger.info('Started notofiactions for %d' % now.hour)
         subs = get_hour_subs(now.hour)
         send_notifications(subs)
+        logger.info('Finished notofiactions for %d' % now.hour)
     except Exception as e:
         logger.error('Notifier error')
         logger.exception(e)
 
 
+class GracefulKiller:
+    kill_now = False
+
+    def __init__(self):
+        signal.signal(signal.SIGINT, self.exit_gracefully)
+        signal.signal(signal.SIGTERM, self.exit_gracefully)
+
+    def exit_gracefully(self, signum, frame):
+        self.kill_now = True
+
+
 class Notifier:
     def __init__(self, interval=1):
-        self.cease_run = False
+        self.killer = GracefulKiller()
         self.interval = interval
         schedule.every().hour.at(":00").do(send_actual_notifications)
 
     def start(self):
         logger.info('Notification scheduler started')
-        while not self.cease_run:
+        while not self.killer.kill_now:
             logger.debug('1')
             schedule.run_pending()
             time.sleep(self.interval)
-        logger.info('Notification scheduler stopped')
-
-    def stop(self):  # TODO: KeyboardInterrupt
-        self.cease_run = True
-        logger.info('Notification scheduler stopped')
+        logger.info('Notification scheduler stopped gracefully')
 
 
 if __name__ == "__main__":
