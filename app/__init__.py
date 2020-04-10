@@ -46,8 +46,6 @@ def create_app(config_class=Config):
 
         app.logger.setLevel(logging.INFO)
 
-        app.logger.info('smog-backend startup')  # TODO: przenieść bo śmieci notifierem
-
     return app
 
 

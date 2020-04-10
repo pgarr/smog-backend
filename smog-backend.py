@@ -2,6 +2,8 @@ from app import create_app, db, cli
 from app.models import Subscription, SubscriptionHour
 
 app = create_app()
+app.logger.info('smog-backend startup')
+
 cli.register(app)
 
 
