@@ -64,7 +64,7 @@ def register():
 def manage_subscription(token):
     subscription = Subscription.verify_change_subscription_token(token)
     if not subscription:
-        return error_response(400, "Invalid token!")  # TODO: ulepszyć odpowiedź
+        return error_response(404, "Token not recognized")
     else:
         current_app.logger.info('Manage: %s' % subscription)
 
