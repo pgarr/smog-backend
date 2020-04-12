@@ -29,7 +29,7 @@ class Subscription(db.Model):
 
         self.hours = [SubscriptionHour(hour=h) for h in new_hours]
 
-    def get_change_subscription_token(self, expires_in=6000):  # TODO: dostosować czas
+    def get_change_subscription_token(self, expires_in=60 * 60 * 24):
         return jwt.encode(
             {'change_subscription': self.id, 'exp': time() + expires_in},
             current_app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
